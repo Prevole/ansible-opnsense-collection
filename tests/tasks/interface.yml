@@ -1,0 +1,11 @@
+- opnsense_interface:
+    path: /conf/config.xml
+    name: test
+    if: igb3
+    ipaddr: 10.20.30.1
+    ipaddrv6: track6
+    subnet: 24
+    subnetv6: 64
+    track6-interface: wan
+    track6-prefix-id: 0
+    descr: TEST
