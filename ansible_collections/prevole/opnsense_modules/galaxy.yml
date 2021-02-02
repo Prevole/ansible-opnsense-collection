@@ -1,0 +1,18 @@
+name: opnsense_modules
+namespace: prevole
+description: OPNSense modules
+readme: README.md
+version: 0.0.1
+license: MIT
+repository: https://github.com/prevole/opnsense_ansible_collection
+tags:
+  - OPNSense
+authors:
+  - Laurent Prevost <prevole@prevole.ch>
+dependencies: []
+build_ignore:
+  - '.envrc'
+  - '*.tar.gz'
+  - 'tests'
+  - '.idea'
+

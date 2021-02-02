@@ -1,15 +1,15 @@
-
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
+from ansible.module_utils.basic import AnsibleModule
+
 DOCUMENTATION = r'''
 ---
-module: template
+module: opnsense
 version_added: 2.10
 short_description: OPNSense Interface module
 '''
 
-from ansible.module_utils.basic import AnsibleModule
 
 def main():
     module = AnsibleModule(

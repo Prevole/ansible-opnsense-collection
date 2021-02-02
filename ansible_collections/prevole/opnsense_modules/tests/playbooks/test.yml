@@ -12,6 +12,6 @@
 - hosts: sample
   gather_facts: false
   collections:
-    - prevole.opnsense
+    - prevole.opnsense_modules
   tasks:
     - include_tasks: ../tasks/interface.yml
