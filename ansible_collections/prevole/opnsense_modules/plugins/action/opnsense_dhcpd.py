@@ -59,7 +59,7 @@ class ActionModule(BaseActionModule):
 
     def _create_or_update_commands(self, interface_name):
         command_builder = ChangeCommandBuilder(
-            path=self._path,
+            path=self._task.args.get('path'),
             spec=INTERFACE_FIELDS,
             xpath_base=f'/opnsense/dhcpd/{interface_name}'
         )
@@ -70,7 +70,7 @@ class ActionModule(BaseActionModule):
             for static in self._task.args['staticmap']:
                 if static.get('state', 'present') == 'present':
                     static_map_command_builder = ChangeCommandBuilder(
-                        path=self._path,
+                        path=self._task.args.get('path'),
                         spec=STATIC_MAP_FIELD,
                         xpath_base=f'/opnsense/dhcpd/{interface_name}/staticmap[mac/text()="{static["mac"]}"]'
                     )
@@ -78,7 +78,7 @@ class ActionModule(BaseActionModule):
                     commands = commands + static_map_command_builder.build(static)
                 else:
                     commands = commands + [RemoveXmlCommand(
-                        path=self._path,
+                        path=self._task.args.get('path'),
                         xpath=f'/opnsense/dhcpd/{interface_name}/staticmap[mac/text()="{static["mac"]}"]'
                     )]
 
@@ -86,6 +86,6 @@ class ActionModule(BaseActionModule):
 
     def _remove_commands(self, interface_name):
         return [RemoveXmlCommand(
-            path=self._path,
+            path=self._task.args.get('path'),
             xpath=f'/opnsense/dhcpd/{interface_name}'
         )]
