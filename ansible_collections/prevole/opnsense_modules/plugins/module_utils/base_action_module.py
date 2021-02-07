@@ -2,11 +2,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from abc import abstractmethod
-from uuid import uuid4
 
 from ansible.plugins.action import ActionBase
 
-from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_result import XmlResult
+from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
+    import COMMAND_TYPE_COUNT
+from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_result \
+    import XmlResult
 
 
 class BaseActionModule(ActionBase):
@@ -49,7 +51,10 @@ class BaseActionModule(ActionBase):
                         task_vars=task_vars
                     )
 
-                    self._xml_result.add(result, command)
+                    if command.type == COMMAND_TYPE_COUNT:
+                        self._run_commands(command.next_commands(result.get('count')), task_vars)
+                    else:
+                        self._xml_result.add(result, command)
 
                 except Exception as e:
                     self._result.update(dict(

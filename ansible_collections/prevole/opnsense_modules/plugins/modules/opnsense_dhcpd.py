@@ -39,7 +39,7 @@ def main():
                 state=dict(type='str', choices=['present', 'absent'], default='present'),
                 ipaddr=dict(type='str', required=True),
                 hostname=dict(type='str'),
-                descr=dict(type='str'),
+                descr=dict(type='str', aliases=['description']),
                 winsserver=dict(type='str', aliases=['wins']),
                 dnsserver=dict(type='str', aliases=['dns']),
                 ntpserver=dict(type='str', aliases=['ntp'])

@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
-    import COMMAND_TYPE_CHANGE
+    import COMMAND_TYPE_CHANGE, COMMAND_TYPE_REMOVE, COMMAND_TYPE_EMPTY, COMMAND_TYPE_COUNT
+
+DEFAULT_TYPES = [
+    COMMAND_TYPE_REMOVE,
+    COMMAND_TYPE_EMPTY,
+    COMMAND_TYPE_COUNT
+]
 
 
 class XmlResult(object):
@@ -14,11 +20,12 @@ class XmlResult(object):
         self._operations = []
 
     def add(self, result, command):
-        if result.get('changed', False):
+        if result.get('changed', False) and not self._failed:
             self._changed = True
             self._build_details(result, command)
 
         elif result.get('failed', False):
+            self._changed = False
             self._failed = True
             self._msg = result.get('msg', None)
             self._exception = result.get('exception', None)
@@ -52,7 +59,7 @@ class XmlResult(object):
                 'value': xml.get('value'),
                 f'{command.type}': xml.get('xpath')
             })
-        else:
+        elif command.type in DEFAULT_TYPES:
             self._operations.append({
                 f'{command.type}': xml.get('xpath')
             })

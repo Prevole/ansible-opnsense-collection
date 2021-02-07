@@ -1,9 +1,10 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command import XmlCommand, \
-    AddOrUpdateXmlCommand, RemoveXmlCommand
-from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_result import XmlResult
+from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
+    import AddOrUpdateXmlCommand, RemoveXmlCommand
+from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_result \
+    import XmlResult
 
 
 class TestXmlResult:
@@ -18,8 +19,9 @@ class TestXmlResult:
             ))
         ), AddOrUpdateXmlCommand('config', '/a/b/c', 'val'))
 
-        assert xml.has_changed() is False
-        assert xml.operations() == []
+        assert xml.has_changed is False
+        assert xml.has_failed is False
+        assert xml.operations == []
 
         xml.add(dict(
             changed=True,
@@ -29,8 +31,9 @@ class TestXmlResult:
             ))
         ), RemoveXmlCommand('config', '/a/b/d'))
 
-        assert xml.has_changed() is True
-        assert xml.operations() == [{
+        assert xml.has_changed is True
+        assert xml.has_failed is False
+        assert xml.operations == [{
             'remove': '/a/b/d'
         }]
 
@@ -42,10 +45,35 @@ class TestXmlResult:
             ))
         ), AddOrUpdateXmlCommand('config', '/a/b/e', 'val3'))
 
-        assert xml.has_changed() is True
-        assert xml.operations() == [{
+        assert xml.has_changed is True
+        assert xml.has_failed is False
+        assert xml.operations == [{
             'remove': '/a/b/d'
         }, {
             'value': 'val3',
             'change': '/a/b/e'
+        }]
+
+        xml.add(dict(
+            failed=True,
+            msg='This is an error',
+            exception=Exception(),
+            invocation=dict(module_args=dict(
+                value='val4',
+                xpath='/a/b/f'
+            ))
+        ), AddOrUpdateXmlCommand('config', '/a/b/f', 'val4'))
+
+        assert xml.has_changed is False
+        assert xml.has_failed is True
+        assert xml.msg is 'This is an error'
+        assert type(xml.exception) is Exception
+        assert xml.operations == [{
+            'remove': '/a/b/d'
+        }, {
+            'value': 'val3',
+            'change': '/a/b/e'
+        }, {
+            'value': 'val4',
+            'change': '/a/b/f'
         }]

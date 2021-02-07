@@ -1,9 +1,12 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-from ansible_collections.prevole.opnsense_modules.plugins.module_utils.base_action_module import BaseActionModule
-from ansible_collections.prevole.opnsense_modules.plugins.module_utils.command_builder import ChangeCommandBuilder
-from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command import RemoveXmlCommand
+from ansible_collections.prevole.opnsense_modules.plugins.module_utils.base_action_module \
+    import BaseActionModule
+from ansible_collections.prevole.opnsense_modules.plugins.module_utils.command_builder \
+    import ChangeCommandBuilder
+from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
+    import RemoveXmlCommand
 
 INTERFACE_FIELDS = [
     dict(name='state', skip=True),
@@ -31,7 +34,7 @@ STATIC_MAP_FIELD = [
     dict(name='mac', skip=True),
     dict(name='ipaddr'),
     dict(name='hostname'),
-    dict(name='descr'),
+    dict(name='descr', alias='description'),
     dict(name='winsserver'),
     dict(name='dnsserver'),
     dict(name='ntpserver')
