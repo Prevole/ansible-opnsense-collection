@@ -15,8 +15,9 @@ def main():
     module = AnsibleModule(
         argument_spec=dict(
             state=dict(type='str', choices=['present', 'absent'], default='present'),
-            name=dict(type='str', required=True),
             path=dict(type='path', required=True),
+            mode=dict(type='str', choices=['remote', 'fetch'], default='remote'),
+            name=dict(type='str', required=True),
             enable=dict(type='bool'),
             ddnsdomainalgorithm=dict(type='str', default='hmac-md5'),
             tftp=dict(type='str'),

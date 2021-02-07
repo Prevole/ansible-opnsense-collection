@@ -11,8 +11,9 @@
 #    descr: TEST
 
 - opnsense_dhcpd:
-    name: opt1
     path: /conf/config.xml
+    mode: fetch
+    name: opt1
     enable: True
     range:
       start: 10.180.200.10

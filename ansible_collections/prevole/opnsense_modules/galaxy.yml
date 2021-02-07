@@ -15,4 +15,6 @@ build_ignore:
   - '*.tar.gz'
   - 'tests'
   - '.idea'
+  - 'htmlcov'
+  - '.pytest_cache'
 
