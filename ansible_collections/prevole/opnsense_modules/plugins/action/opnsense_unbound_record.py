@@ -108,7 +108,7 @@ class ActionModule(BaseActionModule):
         return [
             CountConditionalCommand(
                 path=path,
-                xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item',
+                xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item[host]',
                 check=lambda count: count == 0,
                 then_commands=[AddEmptyXmlCommand(
                     path=path,
