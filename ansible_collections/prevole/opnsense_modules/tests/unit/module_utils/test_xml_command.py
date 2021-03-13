@@ -1,33 +1,34 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import pytest
+
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
-    import XmlCommand, AddOrUpdateXmlCommand, AddEmptyXmlCommand, RemoveXmlCommand, CountConditionalCommand
+    import XmlCommand, AddOrUpdateXmlCommand, AddEmptyXmlCommand, RemoveXmlCommand, CountConditionalCommand, \
+    XmlCommandType
 
 
 class TestXmlCommand:
     def test_properties(self):
         command = XmlCommand(
-            command_type='test',
-            path='path',
+            command_type=XmlCommandType.CHANGE,
             xpath='xpath'
         )
 
-        assert command.type is 'test'
-        assert command.args is None
+        assert command.type is XmlCommandType.CHANGE
+        with pytest.raises(NotImplementedError):
+            command.args
 
 
 class TestAddOrUpdateXmlCommand:
     def test_args(self):
         command = AddOrUpdateXmlCommand(
-            path='path',
             xpath='xpath',
             value='value'
         )
 
-        assert command.type is 'change'
+        assert command.type is XmlCommandType.CHANGE
         assert command.args == dict(
-            path='path',
             xpath='xpath',
             value='value',
             pretty_print=True
@@ -36,14 +37,10 @@ class TestAddOrUpdateXmlCommand:
 
 class TestAddEmptyXmlCommand:
     def test_args(self):
-        command = AddEmptyXmlCommand(
-            path='path',
-            xpath='xpath'
-        )
+        command = AddEmptyXmlCommand(xpath='xpath')
 
-        assert command.type is 'empty'
+        assert command.type is XmlCommandType.EMPTY
         assert command.args == dict(
-            path='path',
             xpath='xpath',
             pretty_print=True
         )
@@ -51,14 +48,10 @@ class TestAddEmptyXmlCommand:
 
 class TestRemoveXmlCommand:
     def test_args(self):
-        command = RemoveXmlCommand(
-            path='path',
-            xpath='xpath'
-        )
+        command = RemoveXmlCommand(xpath='xpath')
 
-        assert command.type is 'remove'
+        assert command.type is XmlCommandType.REMOVE
         assert command.args == dict(
-            path='path',
             xpath='xpath',
             state='absent',
             pretty_print=True
@@ -68,21 +61,18 @@ class TestRemoveXmlCommand:
 class TestCountConditionalCommand:
     def test_args(self):
         command = CountConditionalCommand(
-            path='path',
             xpath='xpath',
             check=lambda count: count == 0
         )
 
-        assert command.type is 'count'
+        assert command.type is XmlCommandType.COUNT
         assert command.args == dict(
-            path='path',
             xpath='xpath',
             count='yes'
         )
 
     def test_next_commands(self):
         command = CountConditionalCommand(
-            path='path',
             xpath='xpath',
             check=lambda count: count == 0
         )
@@ -91,21 +81,14 @@ class TestCountConditionalCommand:
         assert command.next_commands(1) == []
 
         command = CountConditionalCommand(
-            path='path',
             xpath='xpath',
             check=lambda count: count == 0,
-            then_commands=[AddEmptyXmlCommand(
-                path='path',
-                xpath='xpath'
-            )],
-            else_commands=[RemoveXmlCommand(
-                path='path',
-                xpath='xpath'
-            )]
+            then_commands=[AddEmptyXmlCommand(xpath='xpath')],
+            else_commands=[RemoveXmlCommand(xpath='xpath')]
         )
 
         assert len(command.next_commands(0)) is 1
-        assert command.next_commands(0)[0].type is 'empty'
+        assert command.next_commands(0)[0].type is XmlCommandType.EMPTY
 
         assert len(command.next_commands(1)) is 1
-        assert command.next_commands(1)[0].type is 'remove'
+        assert command.next_commands(1)[0].type is XmlCommandType.REMOVE

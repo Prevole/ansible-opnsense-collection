@@ -1,0 +1,7 @@
+use asdf
+
+export OPNSENSE_KEY=
+export OPNSENSE_SECRET=
+
+export PYTHONPATH=$PYTHONPATH:../../..
+export PYTHON_INTERPRETER=~/.asdf/installs/python/3.8.5/bin/python

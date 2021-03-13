@@ -10,7 +10,6 @@ class TestChangeCommandBuilder:
         return list(map(lambda el: el.args, result))
 
     def test_build_simple(self):
-        path = 'p1/p2/p3'
         spec = [
             dict(name='field1'),
             dict(name='field2')
@@ -20,19 +19,17 @@ class TestChangeCommandBuilder:
             field2='value2'
         )
 
-        builder = ChangeCommandBuilder(path=path, spec=spec, xpath_base='/base/path')
+        builder = ChangeCommandBuilder(spec=spec, xpath_base='/base/path')
 
         result = builder.build(args)
 
         assert self._convert_result(result) == [
             {
-                'path': path,
                 'xpath': '/base/path/field1',
                 'value': 'value1',
                 'pretty_print': True
             },
             {
-                'path': path,
                 'xpath': '/base/path/field2',
                 'value': 'value2',
                 'pretty_print': True
@@ -40,7 +37,6 @@ class TestChangeCommandBuilder:
         ]
 
     def test_build_complex(self):
-        path = 'p1/p2/p3'
         spec = [
             dict(name='field1'),
             dict(name='field2', values=[
@@ -60,25 +56,22 @@ class TestChangeCommandBuilder:
             )
         )
 
-        builder = ChangeCommandBuilder(path=path, spec=spec, xpath_base='/base/path')
+        builder = ChangeCommandBuilder(spec=spec, xpath_base='/base/path')
 
         result = builder.build(args)
 
         assert self._convert_result(result) == [
             {
-                'path': path,
                 'xpath': '/base/path/field1',
                 'value': 'value1',
                 'pretty_print': True
             },
             {
-                'path': path,
                 'xpath': '/base/path/field2/sfield21',
                 'value': 'svalue21',
                 'pretty_print': True
             },
             {
-                'path': path,
                 'xpath': '/base/path/field2/sfield22/sfield221',
                 'value': 'svalue221',
                 'pretty_print': True
@@ -86,7 +79,6 @@ class TestChangeCommandBuilder:
         ]
 
     def test_build_complex_with_missing_args(self):
-        path = 'p1/p2/p3'
         spec = [
             dict(name='field1'),
             dict(name='field2', values=[
@@ -108,25 +100,22 @@ class TestChangeCommandBuilder:
             )
         )
 
-        builder = ChangeCommandBuilder(path=path, spec=spec, xpath_base='/base/path')
+        builder = ChangeCommandBuilder(spec=spec, xpath_base='/base/path')
 
         result = builder.build(args)
 
         assert self._convert_result(result) == [
             {
-                'path': path,
                 'xpath': '/base/path/field1',
                 'value': 'value1',
                 'pretty_print': True
             },
             {
-                'path': path,
                 'xpath': '/base/path/field2/sfield22/sfield221',
                 'value': 'svalue221',
                 'pretty_print': True
             },
             {
-                'path': path,
                 'xpath': '/base/path/field2/sfield22/sfield223',
                 'value': 'svalue223',
                 'pretty_print': True
@@ -134,7 +123,6 @@ class TestChangeCommandBuilder:
         ]
 
     def test_build_alias(self):
-        path = 'p1/p2/p3'
         spec = [
             dict(name='field1', alias='ff1'),
             dict(name='field2', alias='ff2')
@@ -144,19 +132,17 @@ class TestChangeCommandBuilder:
             ff2='value2'
         )
 
-        builder = ChangeCommandBuilder(path=path, spec=spec, xpath_base='/base/path')
+        builder = ChangeCommandBuilder(spec=spec, xpath_base='/base/path')
 
         result = builder.build(args)
 
         assert self._convert_result(result) == [
             {
-                'path': path,
                 'xpath': '/base/path/field1',
                 'value': 'value1',
                 'pretty_print': True
             },
             {
-                'path': path,
                 'xpath': '/base/path/field2',
                 'value': 'value2',
                 'pretty_print': True
@@ -164,19 +150,17 @@ class TestChangeCommandBuilder:
         ]
 
     def test_build_default(self):
-        path = 'p1/p2/p3'
         spec = [
             dict(name='field1', default='value1')
         ]
         args = dict()
 
-        builder = ChangeCommandBuilder(path=path, spec=spec, xpath_base='/base/path')
+        builder = ChangeCommandBuilder(spec=spec, xpath_base='/base/path')
 
         result = builder.build(args)
 
         assert self._convert_result(result) == [
             {
-                'path': path,
                 'xpath': '/base/path/field1',
                 'value': 'value1',
                 'pretty_print': True
@@ -184,19 +168,17 @@ class TestChangeCommandBuilder:
         ]
 
     def test_build_empty(self):
-        path = 'p1/p2/p3'
         spec = [
             dict(name='field1', empty=True)
         ]
         args = dict()
 
-        builder = ChangeCommandBuilder(path=path, spec=spec, xpath_base='/base/path')
+        builder = ChangeCommandBuilder(spec=spec, xpath_base='/base/path')
 
         result = builder.build(args)
 
         assert self._convert_result(result) == [
             {
-                'path': path,
                 'xpath': '/base/path/field1',
                 'value': None,
                 'pretty_print': True
@@ -204,20 +186,18 @@ class TestChangeCommandBuilder:
         ]
 
     def test_build_skip(self):
-        path = 'p1/p2/p3'
         spec = [
             dict(name='field0', skip=True),
             dict(name='field1', empty=True)
         ]
         args = dict()
 
-        builder = ChangeCommandBuilder(path=path, spec=spec, xpath_base='/base/path')
+        builder = ChangeCommandBuilder(spec=spec, xpath_base='/base/path')
 
         result = builder.build(args)
 
         assert self._convert_result(result) == [
             {
-                'path': path,
                 'xpath': '/base/path/field1',
                 'value': None,
                 'pretty_print': True

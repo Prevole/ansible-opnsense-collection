@@ -17,7 +17,7 @@ class TestXmlResult:
                 value='val',
                 xpath='/a/b/c'
             ))
-        ), AddOrUpdateXmlCommand('config', '/a/b/c', 'val'))
+        ), AddOrUpdateXmlCommand('/a/b/c', 'val'))
 
         assert xml.has_changed is False
         assert xml.has_failed is False
@@ -29,7 +29,7 @@ class TestXmlResult:
                 value='val2',
                 xpath='/a/b/d'
             ))
-        ), RemoveXmlCommand('config', '/a/b/d'))
+        ), RemoveXmlCommand('/a/b/d'))
 
         assert xml.has_changed is True
         assert xml.has_failed is False
@@ -43,7 +43,7 @@ class TestXmlResult:
                 value='val3',
                 xpath='/a/b/e'
             ))
-        ), AddOrUpdateXmlCommand('config', '/a/b/e', 'val3'))
+        ), AddOrUpdateXmlCommand('/a/b/e', 'val3'))
 
         assert xml.has_changed is True
         assert xml.has_failed is False
@@ -62,7 +62,7 @@ class TestXmlResult:
                 value='val4',
                 xpath='/a/b/f'
             ))
-        ), AddOrUpdateXmlCommand('config', '/a/b/f', 'val4'))
+        ), AddOrUpdateXmlCommand('/a/b/f', 'val4'))
 
         assert xml.has_changed is False
         assert xml.has_failed is True

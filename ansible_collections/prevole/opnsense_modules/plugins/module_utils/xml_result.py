@@ -2,12 +2,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
-    import COMMAND_TYPE_CHANGE, COMMAND_TYPE_REMOVE, COMMAND_TYPE_EMPTY, COMMAND_TYPE_COUNT
+    import XmlCommandType, XmlCommand
+
 
 DEFAULT_TYPES = [
-    COMMAND_TYPE_REMOVE,
-    COMMAND_TYPE_EMPTY,
-    COMMAND_TYPE_COUNT
+    XmlCommandType.REMOVE,
+    XmlCommandType.EMPTY,
+    XmlCommandType.COUNT
 ]
 
 
@@ -19,7 +20,7 @@ class XmlResult(object):
         self._exception = None
         self._operations = []
 
-    def add(self, result, command):
+    def add(self, result, command: XmlCommand):
         if result.get('changed', False) and not self._failed:
             self._changed = True
             self._build_details(result, command)
@@ -51,15 +52,16 @@ class XmlResult(object):
     def exception(self):
         return self._exception
 
-    def _build_details(self, result, command):
+    def _build_details(self, result, command: XmlCommand):
         xml = result.get('invocation', dict()).get('module_args', dict())
 
-        if command.type == COMMAND_TYPE_CHANGE:
+        if command.type == XmlCommandType.CHANGE:
             self._operations.append({
                 'value': xml.get('value'),
-                f'{command.type}': xml.get('xpath')
+                f'{command.type.value}': xml.get('xpath')
             })
+
         elif command.type in DEFAULT_TYPES:
             self._operations.append({
-                f'{command.type}': xml.get('xpath')
+                f'{command.type.value}': xml.get('xpath')
             })

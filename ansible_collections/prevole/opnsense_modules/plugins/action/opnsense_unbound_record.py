@@ -6,7 +6,8 @@ from ansible_collections.prevole.opnsense_modules.plugins.module_utils.base_acti
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.command_builder \
     import ChangeCommandBuilder
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
-    import RemoveXmlCommand, CountConditionalCommand, AddEmptyXmlCommand
+    import RemoveXmlCommand, CountConditionalCommand, AddEmptyXmlCommand, XmlCommand
+
 
 RECORD_FIELDS = [
     dict(name='state', skip=True),
@@ -19,6 +20,7 @@ RECORD_FIELDS = [
     dict(name='mx')
 ]
 
+
 ALIAS_ITEM_FIELD = [
     dict(name='state', skip=True),
     dict(name='host', skip=True),
@@ -28,41 +30,38 @@ ALIAS_ITEM_FIELD = [
 
 
 class ActionModule(BaseActionModule):
-    def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
-        super().__init__(task, connection, play_context, loader, templar, shared_loader_obj)
-        self.result = None
-
     @property
     def module_name(self):
         return 'opnsense_unbound_record'
 
     def _run(self, task_vars):
-        path = self._task.args.get('path')
+        commands: [XmlCommand] = []
 
         if self._task.args.get('state', 'present') == 'present':
-            commands = self._create_or_update_commands(path)
+            commands.extend(self._create_or_update_commands())
         else:
-            commands = self._remove_commands(path)
+            commands.extend(self._remove_commands())
 
-        commands = commands + self._empty_hosts_commands(path)
+        commands.extend(empty_hosts_commands())
 
         self._run_commands(commands, task_vars)
 
-    def _create_or_update_commands(self, path):
+    def _create_or_update_commands(self):
         host = self._task.args.get('host')
 
         command_builder = ChangeCommandBuilder(
-            path=path,
             spec=RECORD_FIELDS,
             xpath_base=f'/opnsense/unbound/hosts[host/text()="{host}"]'
         )
 
         commands = command_builder.build(self._task.args)
 
-        return commands + self._aliases_commands(path, host)
+        commands.extend(self._aliases_commands(host))
 
-    def _aliases_commands(self, path, host):
-        commands = []
+        return commands
+
+    def _aliases_commands(self, host):
+        commands: [XmlCommand] = []
 
         if 'aliases' in self._task.args:
             for alias in self._task.args['aliases']:
@@ -70,59 +69,40 @@ class ActionModule(BaseActionModule):
 
                 if alias.get('state', 'present') == 'present':
                     alias_command_builder = ChangeCommandBuilder(
-                        path=path,
                         spec=ALIAS_ITEM_FIELD,
                         xpath_base=xpath
                     )
 
-                    commands = commands + alias_command_builder.build(alias)
+                    commands.extend(alias_command_builder.build(alias))
                 else:
-                    commands = commands + [RemoveXmlCommand(
-                        path=path,
-                        xpath=xpath
-                    )]
+                    commands.append(RemoveXmlCommand(xpath=xpath))
 
-        return commands + self._empty_aliases_commands(path, host)
+        commands.extend(empty_aliases_commands(host))
+
+        return commands
+
+    def _remove_commands(self) -> [XmlCommand]:
+        return [RemoveXmlCommand(xpath=f'/opnsense/unbound/hosts[host/text()="{self._task.args.get("host")}"]')]
 
 
-    @staticmethod
-    def _empty_hosts_commands(path):
-        return [
-            CountConditionalCommand(
-                path=path,
-                xpath='/opnsense/unbound/hosts[host]',
-                check=lambda count: count == 0,
-                then_commands=[AddEmptyXmlCommand(
-                    path=path,
-                    xpath='/opnsense/unbound/hosts'
-                )],
-                else_commands=[RemoveXmlCommand(
-                    path=path,
-                    xpath='/opnsense/unbound/hosts[not(host)]'
-                )]
-            )
-        ]
+def empty_aliases_commands(host) -> [XmlCommand]:
+    return [
+        CountConditionalCommand(
+            xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item[host]',
+            check=lambda count: count == 0,
+            then_commands=[AddEmptyXmlCommand(xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item')],
+            else_commands=[
+                RemoveXmlCommand(xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item[not(host)]')]
+        )
+    ]
 
-    @staticmethod
-    def _empty_aliases_commands(path, host):
-        return [
-            CountConditionalCommand(
-                path=path,
-                xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item[host]',
-                check=lambda count: count == 0,
-                then_commands=[AddEmptyXmlCommand(
-                    path=path,
-                    xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item'
-                )],
-                else_commands=[RemoveXmlCommand(
-                    path=path,
-                    xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item[not(host)]'
-                )]
-            )
-        ]
 
-    def _remove_commands(self, path):
-        return [RemoveXmlCommand(
-            path=path,
-            xpath=f'/opnsense/unbound/hosts[host/text()="{self._task.args.get("host")}"]'
-        )]
+def empty_hosts_commands() -> [XmlCommand]:
+    return [
+        CountConditionalCommand(
+            xpath='/opnsense/unbound/hosts[host]',
+            check=lambda count: count == 0,
+            then_commands=[AddEmptyXmlCommand(xpath='/opnsense/unbound/hosts')],
+            else_commands=[RemoveXmlCommand(xpath='/opnsense/unbound/hosts[not(host)]')]
+        )
+    ]

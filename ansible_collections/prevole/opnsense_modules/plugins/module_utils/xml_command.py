@@ -1,22 +1,27 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-COMMAND_TYPE_CHANGE = 'change'
-COMMAND_TYPE_REMOVE = 'remove'
-COMMAND_TYPE_COUNT = 'count'
-COMMAND_TYPE_EMPTY = 'empty'
+from abc import abstractmethod
+from enum import Enum
+
+
+class XmlCommandType(Enum):
+    CHANGE = 'change'
+    REMOVE = 'remove'
+    COUNT = 'count'
+    EMPTY = 'empty'
 
 
 class XmlCommand:
-    def __init__(self, command_type, path, xpath, value=None):
+    def __init__(self, command_type: XmlCommandType, xpath, value=None):
         self._type = command_type
-        self._path = path
         self._xpath = xpath
         self._value = value if value is None else f'{value}'
 
     @property
-    def args(self):
-        pass
+    @abstractmethod
+    def args(self) -> dict:
+        raise NotImplementedError()
 
     @property
     def type(self):
@@ -24,13 +29,12 @@ class XmlCommand:
 
 
 class AddOrUpdateXmlCommand(XmlCommand):
-    def __init__(self, path, xpath, value=None):
-        super().__init__(COMMAND_TYPE_CHANGE, path, xpath, value)
+    def __init__(self, xpath, value=None):
+        super().__init__(XmlCommandType.CHANGE, xpath, value)
 
     @property
-    def args(self):
+    def args(self) -> dict:
         return dict(
-            path=self._path,
             xpath=self._xpath,
             value=self._value,
             pretty_print=True
@@ -38,26 +42,24 @@ class AddOrUpdateXmlCommand(XmlCommand):
 
 
 class AddEmptyXmlCommand(XmlCommand):
-    def __init__(self, path, xpath):
-        super().__init__(COMMAND_TYPE_EMPTY, path, xpath)
+    def __init__(self, xpath):
+        super().__init__(XmlCommandType.EMPTY, xpath)
 
     @property
-    def args(self):
+    def args(self) -> dict:
         return dict(
-            path=self._path,
             xpath=self._xpath,
             pretty_print=True
         )
 
 
 class RemoveXmlCommand(XmlCommand):
-    def __init__(self, path, xpath):
-        super().__init__(COMMAND_TYPE_REMOVE, path, xpath)
+    def __init__(self, xpath):
+        super().__init__(XmlCommandType.REMOVE, xpath)
 
     @property
-    def args(self):
+    def args(self) -> dict:
         return dict(
-            path=self._path,
             xpath=self._xpath,
             state='absent',
             pretty_print=True
@@ -65,16 +67,15 @@ class RemoveXmlCommand(XmlCommand):
 
 
 class CountConditionalCommand(XmlCommand):
-    def __init__(self, path, xpath, check, then_commands=None, else_commands=None):
-        super().__init__(COMMAND_TYPE_COUNT, path, xpath)
+    def __init__(self, xpath, check, then_commands=None, else_commands=None):
+        super().__init__(XmlCommandType.COUNT, xpath)
         self._then_commands = then_commands if then_commands else []
         self._else_commands = else_commands if else_commands else []
         self._check = check
 
     @property
-    def args(self):
+    def args(self) -> dict:
         return dict(
-            path=self._path,
             xpath=self._xpath,
             count='yes'
         )

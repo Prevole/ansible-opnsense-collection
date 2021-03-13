@@ -12,7 +12,6 @@ services:
       - PUBLIC_KEY_FILE=/id_rsa.pub
       - SUDO_ACCESS=true
     volumes:
-#      - ./samples:/conf
       - ~/.ssh/id_rsa.pub:/id_rsa.pub
     ports:
       - 2222:2222

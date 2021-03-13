@@ -42,10 +42,6 @@ STATIC_MAP_FIELD = [
 
 
 class ActionModule(BaseActionModule):
-    def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
-        super().__init__(task, connection, play_context, loader, templar, shared_loader_obj)
-        self.result = None
-
     @property
     def module_name(self):
         return 'opnsense_dhcpd'
@@ -56,13 +52,12 @@ class ActionModule(BaseActionModule):
         if self._task.args.get('state', 'present') == 'present':
             commands = self._create_or_update_commands(interface_name)
         else:
-            commands = self._remove_commands(interface_name)
+            commands = _remove_commands(interface_name)
 
         self._run_commands(commands, task_vars)
 
     def _create_or_update_commands(self, interface_name):
         command_builder = ChangeCommandBuilder(
-            path=self._task.args.get('path'),
             spec=INTERFACE_FIELDS,
             xpath_base=f'/opnsense/dhcpd/{interface_name}'
         )
@@ -73,7 +68,6 @@ class ActionModule(BaseActionModule):
             for static in self._task.args['staticmap']:
                 if static.get('state', 'present') == 'present':
                     static_map_command_builder = ChangeCommandBuilder(
-                        path=self._task.args.get('path'),
                         spec=STATIC_MAP_FIELD,
                         xpath_base=f'/opnsense/dhcpd/{interface_name}/staticmap[mac/text()="{static["mac"]}"]'
                     )
@@ -81,14 +75,10 @@ class ActionModule(BaseActionModule):
                     commands = commands + static_map_command_builder.build(static)
                 else:
                     commands = commands + [RemoveXmlCommand(
-                        path=self._task.args.get('path'),
-                        xpath=f'/opnsense/dhcpd/{interface_name}/staticmap[mac/text()="{static["mac"]}"]'
-                    )]
+                        xpath=f'/opnsense/dhcpd/{interface_name}/staticmap[mac/text()="{static["mac"]}"]')]
 
         return commands
 
-    def _remove_commands(self, interface_name):
-        return [RemoveXmlCommand(
-            path=self._task.args.get('path'),
-            xpath=f'/opnsense/dhcpd/{interface_name}'
-        )]
+
+def _remove_commands(interface_name):
+    return [RemoveXmlCommand(xpath=f'/opnsense/dhcpd/{interface_name}')]

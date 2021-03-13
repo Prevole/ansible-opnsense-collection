@@ -6,7 +6,7 @@ from abc import abstractmethod
 from ansible.plugins.action import ActionBase
 
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
-    import COMMAND_TYPE_COUNT
+    import XmlCommandType, XmlCommand
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_result \
     import XmlResult
 
@@ -35,24 +35,28 @@ class BaseActionModule(ActionBase):
     @property
     @abstractmethod
     def module_name(self):
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def _run(self, task_vars):
-        pass
+        raise NotImplementedError()
 
-    def _run_commands(self, commands, task_vars):
+    def _run_commands(self, commands: [XmlCommand], task_vars):
         for command in commands:
             if not self._xml_result.has_failed:
                 try:
+                    args = command.args.copy()
+                    args.update(dict(path=self._task.args.get('path')))
+
                     result = self._execute_module(
                         module_name='xml',
-                        module_args=command.args,
+                        module_args=args,
                         task_vars=task_vars
                     )
 
-                    if command.type == COMMAND_TYPE_COUNT:
+                    if command.type == XmlCommandType.COUNT:
                         self._run_commands(command.next_commands(result.get('count')), task_vars)
+
                     else:
                         self._xml_result.add(result, command)
 
