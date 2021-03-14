@@ -66,7 +66,7 @@ class RemoveXmlCommand(XmlCommand):
         )
 
 
-class CountConditionalCommand(XmlCommand):
+class CountConditionalXmlCommand(XmlCommand):
     def __init__(self, xpath, check, then_commands=None, else_commands=None):
         super().__init__(XmlCommandType.COUNT, xpath)
         self._then_commands = then_commands if then_commands else []

@@ -66,7 +66,7 @@ class TestXmlResult:
 
         assert xml.has_changed is False
         assert xml.has_failed is True
-        assert xml.msg is 'This is an error'
+        assert xml.msg == 'This is an error'
         assert type(xml.exception) is Exception
         assert xml.operations == [{
             'remove': '/a/b/d'

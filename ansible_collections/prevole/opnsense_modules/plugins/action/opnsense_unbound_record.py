@@ -6,7 +6,7 @@ from ansible_collections.prevole.opnsense_modules.plugins.module_utils.base_acti
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.command_builder \
     import ChangeCommandBuilder
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
-    import RemoveXmlCommand, CountConditionalCommand, AddEmptyXmlCommand, XmlCommand
+    import RemoveXmlCommand, CountConditionalXmlCommand, AddEmptyXmlCommand, XmlCommand
 
 
 RECORD_FIELDS = [
@@ -87,7 +87,7 @@ class ActionModule(BaseActionModule):
 
 def empty_aliases_commands(host) -> [XmlCommand]:
     return [
-        CountConditionalCommand(
+        CountConditionalXmlCommand(
             xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item[host]',
             check=lambda count: count == 0,
             then_commands=[AddEmptyXmlCommand(xpath=f'/opnsense/unbound/hosts[host/text()="{host}"]/aliases/item')],
@@ -99,7 +99,7 @@ def empty_aliases_commands(host) -> [XmlCommand]:
 
 def empty_hosts_commands() -> [XmlCommand]:
     return [
-        CountConditionalCommand(
+        CountConditionalXmlCommand(
             xpath='/opnsense/unbound/hosts[host]',
             check=lambda count: count == 0,
             then_commands=[AddEmptyXmlCommand(xpath='/opnsense/unbound/hosts')],

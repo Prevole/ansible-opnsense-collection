@@ -4,8 +4,8 @@ __metaclass__ = type
 import pytest
 
 from ansible_collections.prevole.opnsense_modules.plugins.module_utils.xml_command \
-    import XmlCommand, AddOrUpdateXmlCommand, AddEmptyXmlCommand, RemoveXmlCommand, CountConditionalCommand, \
-    XmlCommandType
+    import XmlCommand, AddEmptyXmlCommand, RemoveXmlCommand, CountConditionalXmlCommand, XmlCommandType, \
+    AddOrUpdateXmlCommand
 
 
 class TestXmlCommand:
@@ -60,7 +60,7 @@ class TestRemoveXmlCommand:
 
 class TestCountConditionalCommand:
     def test_args(self):
-        command = CountConditionalCommand(
+        command = CountConditionalXmlCommand(
             xpath='xpath',
             check=lambda count: count == 0
         )
@@ -72,7 +72,7 @@ class TestCountConditionalCommand:
         )
 
     def test_next_commands(self):
-        command = CountConditionalCommand(
+        command = CountConditionalXmlCommand(
             xpath='xpath',
             check=lambda count: count == 0
         )
@@ -80,15 +80,15 @@ class TestCountConditionalCommand:
         assert command.next_commands(0) == []
         assert command.next_commands(1) == []
 
-        command = CountConditionalCommand(
+        command = CountConditionalXmlCommand(
             xpath='xpath',
             check=lambda count: count == 0,
             then_commands=[AddEmptyXmlCommand(xpath='xpath')],
             else_commands=[RemoveXmlCommand(xpath='xpath')]
         )
 
-        assert len(command.next_commands(0)) is 1
+        assert len(command.next_commands(0)) == 1
         assert command.next_commands(0)[0].type is XmlCommandType.EMPTY
 
-        assert len(command.next_commands(1)) is 1
+        assert len(command.next_commands(1)) == 1
         assert command.next_commands(1)[0].type is XmlCommandType.REMOVE

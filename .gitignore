@@ -1,3 +1,5 @@
 .coverage
 htmlcov/
 __pycache__/
+assets/
+test_report.html

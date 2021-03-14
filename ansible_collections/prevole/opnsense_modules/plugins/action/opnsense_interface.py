@@ -19,6 +19,7 @@ INTERFACE_FIELDS = [
     'dhcp6-ia-pd-len'
 ]
 
+
 class ActionModule(ActionBase):
     def run(self, tmp=None, task_vars=None):
         result = super(ActionModule, self).run(tmp, task_vars)

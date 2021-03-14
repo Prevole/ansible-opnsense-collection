@@ -43,30 +43,32 @@ class BaseActionModule(ActionBase):
 
     def _run_commands(self, commands: [XmlCommand], task_vars):
         for command in commands:
-            if not self._xml_result.has_failed:
-                try:
-                    args = command.args.copy()
-                    args.update(dict(path=self._task.args.get('path')))
+            if self._xml_result.has_failed:
+                break
 
-                    result = self._execute_module(
-                        module_name='xml',
-                        module_args=args,
-                        task_vars=task_vars
-                    )
+            try:
+                args = command.args.copy()
+                args.update(dict(path=self._task.args.get('path')))
 
-                    if command.type == XmlCommandType.COUNT:
-                        self._run_commands(command.next_commands(result.get('count')), task_vars)
+                result = self._execute_module(
+                    module_name='xml',
+                    module_args=args,
+                    task_vars=task_vars
+                )
 
-                    else:
-                        self._xml_result.add(result, command)
+                if command.type == XmlCommandType.COUNT:
+                    self._run_commands(command.next_commands(result.get('count')), task_vars)
 
-                except Exception as e:
-                    self._result.update(dict(
-                        failed=True,
-                        msg='Something went wrong',
-                        exception=e
-                    ))
-                    break
+                else:
+                    self._xml_result.add(result, command)
+
+            except Exception as e:
+                self._result.update(dict(
+                    failed=True,
+                    msg='Something went wrong',
+                    exception=e
+                ))
+                break
 
         self._result.update(dict(
             xml=self._xml_result.operations,
