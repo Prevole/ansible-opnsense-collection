@@ -4,3 +4,4 @@ __pycache__/
 assets/
 test_report.html
 output/
+!.coveragerc*

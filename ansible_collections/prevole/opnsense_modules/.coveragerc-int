@@ -1,0 +1,10 @@
+[run]
+branch = True
+omit =
+    tests/*
+    plugins/*
+    */.ansible/collections/ansible_collections/community/*
+    */.asdf/*
+
+[report]
+show_missing = True
