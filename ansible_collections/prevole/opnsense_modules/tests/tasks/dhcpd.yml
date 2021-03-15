@@ -1,0 +1,12 @@
+- opnsense_dhcpd:
+    path: /conf/dhcpd.xml
+    name: opt1
+    enable: True
+    range:
+      start: 10.180.200.10
+      end: 10.180.200.20
+    staticmap:
+      - mac: 12:34:56:78:90:ab:cd
+        ipaddr: 10.180.200.5
+        hostname: opntest
+        descr: OPNSense Test

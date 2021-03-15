@@ -15,4 +15,12 @@
   collections:
     - prevole.opnsense_modules
   tasks:
-    - include_tasks: ../tasks/interface.yml
+    - include_tasks:
+        file: "{{ item }}"
+      with_fileglob:
+        - ../tasks/*.yml
+
+    - copy:
+        src: /conf/
+        dest: /output/
+        remote_src: yes

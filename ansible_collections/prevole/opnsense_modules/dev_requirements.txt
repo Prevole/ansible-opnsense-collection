@@ -1,0 +1,6 @@
+pytest
+flake8
+lxml
+pytest-flake8
+pytest-html
+pytest-ansible-playbook-runner

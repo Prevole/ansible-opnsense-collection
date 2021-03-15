@@ -5,5 +5,5 @@ RUN apk add --no-cache --virtual .build-deps py3-pip g++ gcc libxml2-dev libxslt
     pip install --no-cache-dir lxml && \
     apk del .build-deps
 
-COPY samples/config.xml /conf/config.xml
+COPY samples/ /conf
 RUN chown -R 1000:1000 /conf

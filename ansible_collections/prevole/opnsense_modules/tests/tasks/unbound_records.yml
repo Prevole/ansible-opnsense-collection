@@ -1,0 +1,11 @@
+- opnsense_unbound_record:
+    path: /conf/unbound_records.xml
+    host: dkxnetboot01
+    domain: darknest.local
+    record: A
+    ip: 10.180.40.9
+    descr: OPNSense Test
+    aliases:
+      - host: dkxnetboot02
+        domain: darknest.local
+        descr: OPNSense Test

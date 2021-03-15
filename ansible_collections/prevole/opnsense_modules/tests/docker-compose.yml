@@ -1,5 +1,5 @@
 ---
-version: "2.1"
+version: "3.5"
 services:
   openssh-server:
     image: openssh-server:latest
@@ -12,7 +12,14 @@ services:
       - PUBLIC_KEY_FILE=/id_rsa.pub
       - SUDO_ACCESS=true
     volumes:
-      - ~/.ssh/id_rsa.pub:/id_rsa.pub
+      - $HOME/.ssh/id_rsa.pub:/id_rsa.pub
+      - ./output:/output
     ports:
       - 2222:2222
     restart: unless-stopped
+    networks:
+      - opnsense_collection
+
+networks:
+  opnsense_collection:
+    name: opnsense_collection

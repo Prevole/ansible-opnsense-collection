@@ -12,9 +12,17 @@ authors:
 dependencies: []
 build_ignore:
   - '.envrc'
+  - '.envrc.sample'
   - '*.tar.gz'
   - 'tests'
+  - 'pytest.ini'
+  - '.editorconfig'
   - '.idea'
-  - 'htmlcov'
+  - 'htmlcov*'
+  - '.coverage*'
   - '.pytest_cache'
+  - 'test_report.html'
+  - 'assets'
+  - 'Makefile'
+  - 'dev_requirements'
 

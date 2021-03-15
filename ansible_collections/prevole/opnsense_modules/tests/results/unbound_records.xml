@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<opnsense>
+  <unbound>
+    <enable>on</enable>
+    <domainoverrides/>
+    <hosts>
+      <host>dkxnetboot01</host>
+      <descr>OPNSense Test</descr>
+      <domain>darknest.local</domain>
+      <rr>A</rr>
+      <ip>10.180.40.9</ip>
+      <aliases>
+        <item>
+          <host>dkxnetboot02</host>
+          <domain>darknest.local</domain>
+          <descr>OPNSense Test</descr>
+        </item>
+      </aliases>
+    </hosts>
+  </unbound>
+</opnsense>
