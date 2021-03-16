@@ -1,0 +1,14 @@
+- name: Install community.general module (required for xml module)
+  command: "ansible-galaxy collection install community.general"
+
+- name: Install lxml
+  pip:
+    name: lxml
+    state: present
+
+- file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ base_conf_dir }}/opnsense-modules"
+    - /results

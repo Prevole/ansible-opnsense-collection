@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<opnsense>
+  <dhcpd>
+    <lan>
+      <enable/>
+      <range>
+        <from>10.20.30.10</from>
+        <to>10.20.30.245</to>
+      </range>
+    </lan>
+    <opt1>
+      <enable>True</enable>
+      <ddnsdomainalgorithm>hmac-md5</ddnsdomainalgorithm>
+      <tftp/>
+      <netboot/>
+      <nextserver/>
+      <winsserver/>
+      <dnsserver/>
+      <ntpserver/>
+      <range>
+        <from>10.180.200.10</from>
+        <to>10.180.200.20</to>
+      </range>
+      <staticmap>
+        <mac>12:34:56:78:90:ab:cd</mac>
+        <ipaddr>10.180.200.5</ipaddr>
+        <hostname>opntest</hostname>
+        <descr>OPNSense Test</descr>
+      </staticmap>
+    </opt1>
+  </dhcpd>
+</opnsense>

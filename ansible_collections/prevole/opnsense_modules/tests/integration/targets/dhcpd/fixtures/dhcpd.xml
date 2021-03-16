@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<opnsense>
+  <dhcpd>
+    <lan>
+      <enable/>
+      <range>
+        <from>10.20.30.10</from>
+        <to>10.20.30.245</to>
+      </range>
+    </lan>
+  </dhcpd>
+</opnsense>

@@ -1,0 +1,28 @@
+- copy:
+    src: fixtures/dhcpd.xml
+    dest: "{{ base_conf_dir }}"
+
+- opnsense_dhcpd:
+    path: "{{ base_conf_dir }}/dhcpd.xml"
+    name: opt1
+    enable: True
+    range:
+      start: 10.180.200.10
+      end: 10.180.200.20
+    staticmap:
+      - mac: 12:34:56:78:90:ab:cd
+        ipaddr: 10.180.200.5
+        hostname: opntest
+        descr: OPNSense Test
+  register: opnsense_dhcpd
+
+- name: Copy results
+  copy:
+    src: results/dhcpd.xml
+    dest: "/results/dhcpd.xml"
+
+- name: Test expected result
+  assert:
+    that:
+    - opnsense_dhcpd.changed == true
+    - "'/results/dhcpd.xml' | compare_xml('{{ base_conf_dir }}/dhcpd.xml') == true"

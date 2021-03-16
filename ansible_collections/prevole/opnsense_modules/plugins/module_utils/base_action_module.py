@@ -51,7 +51,7 @@ class BaseActionModule(ActionBase):
                 args.update(dict(path=self._task.args.get('path')))
 
                 result = self._execute_module(
-                    module_name='xml',
+                    module_name='community.general.xml',
                     module_args=args,
                     task_vars=task_vars
                 )
