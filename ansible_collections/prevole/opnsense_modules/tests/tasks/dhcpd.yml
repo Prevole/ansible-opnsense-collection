@@ -1,5 +1,5 @@
 - opnsense_dhcpd:
-    path: /conf/dhcpd.xml
+    path: "{{ base_conf_dir }}dhcpd.xml"
     name: opt1
     enable: True
     range:

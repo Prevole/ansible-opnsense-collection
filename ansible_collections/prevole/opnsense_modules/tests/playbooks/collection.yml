@@ -12,6 +12,8 @@
 
 - hosts: sample
   gather_facts: false
+  vars:
+    base_conf_dir: /conf/
   collections:
     - prevole.opnsense_modules
   tasks:

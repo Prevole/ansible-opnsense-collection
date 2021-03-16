@@ -1,0 +1,23 @@
+- hosts: localhost
+  gather_facts: false
+  vars:
+    base_conf_dir: /tmp/opnsense-modules/
+  collections:
+    - prevole.opnsense_modules
+  tasks:
+    - file:
+        path: /tmp/opnsense-modules
+        state: directory
+
+    - copy:
+        src: ../samples/
+        dest: "{{ base_conf_dir }}"
+
+    - include_tasks:
+        file: "{{ item }}"
+      with_fileglob:
+        - ../tasks/*.yml
+
+    - copy:
+        src: "{{ base_conf_dir }}"
+        dest: "{{ playbook_dir }}/../output/"

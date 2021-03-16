@@ -9,7 +9,7 @@ from ansible_collections.prevole.opnsense_modules.tests.utils.xml_compare import
 
 @pytest.mark.ansible
 def test_collection(ansible_playbook):
-    ansible_playbook.run_playbook('collection.yml')
+    ansible_playbook.run_playbook('collection-local.yml')
 
     for item in ['dhcpd', 'interfaces', 'unbound_records']:
         current = et.parse(f'tests/output/{item}.xml')

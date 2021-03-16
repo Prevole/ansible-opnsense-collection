@@ -1,5 +1,5 @@
 - opnsense_unbound_record:
-    path: /conf/unbound_records.xml
+    path: "{{ base_conf_dir }}unbound_records.xml"
     host: dkxnetboot01
     domain: darknest.local
     record: A

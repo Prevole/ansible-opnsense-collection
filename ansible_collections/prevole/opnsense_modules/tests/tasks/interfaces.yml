@@ -1,5 +1,5 @@
 - opnsense_interface:
-    path: /conf/interfaces.xml
+    path: "{{ base_conf_dir }}interfaces.xml"
     name: test
     if: igb3
     ipaddr: 10.20.30.1

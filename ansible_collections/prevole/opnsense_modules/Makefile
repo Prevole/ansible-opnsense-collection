@@ -21,7 +21,7 @@ test:
 	pytest --flake8 --cov-report html -m "not ansible"
 	open test_report.html htmlcov/index.html
 
-int-test: up
+int-test: #up
 	rm -f tests/output/*.xml
 	pytest \
 		--cov-config=.coveragerc-int \
@@ -31,9 +31,9 @@ int-test: up
 		-m ansible
 	open htmlcov-int/index.html
 
-playbook: up
+playbook: #up
 	rm -f tests/output/*.xml
-	ansible-playbook tests/playbooks/collection.yml -vvv
+	ansible-playbook tests/playbooks/collection-local.yml -vvv
 
 up:
 	docker-compose -f tests/docker-compose.yml up --build -d
